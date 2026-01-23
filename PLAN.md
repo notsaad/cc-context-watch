@@ -1,6 +1,6 @@
 # cc-context-watch Implementation Plan
 
-A step-by-step guide to building a context usage indicator for Claude Code in C++.
+A step-by-step guide to building a context usage indicator for Claude Code in Rust.
 
 ---
 
@@ -52,26 +52,26 @@ Based on your research, decide how your tool will:
 
 ---
 
-## Phase 3: C++ Project Setup
+## Phase 3: Rust Project Setup
 
-### 3.1 Initialize Build System
+### 3.1 Initialize Project
 
 **Tasks:**
-- [ ] Create `CMakeLists.txt` or `Makefile`
+- [ ] Run `cargo init` to create a new Rust project
 - [ ] Set up basic project structure:
   ```
   cc-context-watch/
   ├── src/
-  │   └── main.cpp
-  ├── include/
-  ├── CMakeLists.txt
+  │   └── main.rs
+  ├── Cargo.toml
   └── README.md
   ```
 
 ### 3.2 Dependencies to Consider
 
-- JSON parsing (for API/event data): `nlohmann/json` or similar
-- Terminal UI (if needed): `ncurses` or ANSI escape codes
+- JSON parsing (for API/event data): `serde` and `serde_json`
+- Terminal UI (if needed): `crossterm` or `ratatui`
+- Async runtime (if needed): `tokio`
 
 ---
 
@@ -110,7 +110,8 @@ Based on your research, decide how your tool will:
 
 - Claude Code docs: `/help` command within Claude Code
 - MCP specification: https://modelcontextprotocol.io/
-- C++ JSON library: https://github.com/nlohmann/json
+- Rust serde library: https://serde.rs/
+- Rust crossterm library: https://github.com/crossterm-rs/crossterm
 
 ---
 
