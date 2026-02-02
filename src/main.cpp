@@ -2,7 +2,6 @@
 #include <iomanip>
 #include <sstream>
 #include <string>
-#include <cmath>
 #include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
@@ -55,16 +54,6 @@ int main() {
 
         const char* reset = "\033[0m";
 
-        // Build 20-char progress bar
-        constexpr int bar_width = 20;
-        int filled = static_cast<int>(std::round(used_pct / 100.0 * bar_width));
-        if (filled > bar_width) filled = bar_width;
-        if (filled < 0) filled = 0;
-
-        std::string bar;
-        for (int i = 0; i < filled; ++i) bar += "█";
-        for (int i = filled; i < bar_width; ++i) bar += "░";
-
         int total_tokens = input_tokens + output_tokens;
         std::string used_str = format_tokens(total_tokens);
         std::string total_str = format_tokens(window_size);
@@ -73,8 +62,7 @@ int main() {
         pct_ss << std::fixed << std::setprecision(1) << used_pct << "%";
 
         std::cout << model_name << " | Context: "
-                  << color << "[" << bar << "] "
-                  << pct_ss.str() << reset
+                  << color << pct_ss.str() << reset
                   << " (" << used_str << " / " << total_str << ")";
 
     } catch (...) {
