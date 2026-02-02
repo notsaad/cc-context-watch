@@ -36,10 +36,12 @@ int main() {
         auto data = json::parse(input);
 
         auto& ctx = data.at("context_window");
-        double used_pct = ctx.at("used_percentage").get<double>();
         int input_tokens = ctx.at("total_input_tokens").get<int>();
         int output_tokens = ctx.at("total_output_tokens").get<int>();
         int window_size = ctx.at("context_window_size").get<int>();
+
+        int total_tokens = input_tokens + output_tokens;
+        double used_pct = (static_cast<double>(total_tokens) / window_size) * 100.0;
 
         std::string model_name = data.at("model").at("display_name").get<std::string>();
 
@@ -54,7 +56,6 @@ int main() {
 
         const char* reset = "\033[0m";
 
-        int total_tokens = input_tokens + output_tokens;
         std::string used_str = format_tokens(total_tokens);
         std::string total_str = format_tokens(window_size);
 
