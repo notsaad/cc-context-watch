@@ -1,22 +1,14 @@
 # cc-context-watch
 
-A context window usage indicator for Claude Code's status line.
+A status line tool that displays your Claude Code context window usage with color-coded percentage indicators.
 
-## Overview
+## Installation
 
-cc-context-watch displays a visual progress bar showing your current context window usage directly in Claude Code's status line. It reads JSON from stdin (provided by Claude Code's Status Line API), parses context window stats, and outputs a styled progress bar.
+### Requirements
+- CMake 3.14+
+- C++17 compiler
 
-**Example output:**
-
-```
-Opus | Context: [████████░░░░░░░░░░░░] 42.5% (19.8K / 200K)
-```
-
-The bar is color-coded: green (<50%), yellow (50–75%), red (>75%).
-
-## Build
-
-Requires CMake 3.14+ and a C++17 compiler.
+### Build
 
 ```bash
 mkdir -p build && cd build
@@ -24,17 +16,11 @@ cmake -DCMAKE_BUILD_TYPE=Release ..
 cmake --build .
 ```
 
-On macOS, if Apple Clang can't find C++ headers, specify a Homebrew GCC:
-
-```bash
-cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=g++-15 ..
-```
-
 The binary will be at `build/cc-context-watch`.
 
-## Install
+### Configure Claude Code
 
-Add the following to `~/.claude/settings.json`:
+Add this to `~/.claude/settings.json`:
 
 ```json
 {
@@ -46,9 +32,22 @@ Add the following to `~/.claude/settings.json`:
 }
 ```
 
-Replace `/absolute/path/to/cc-context-watch` with the actual path to the built binary.
+Replace `/absolute/path/to/cc-context-watch` with the actual path to your built binary.
 
-## Tech Stack
+## Usage
 
-- C++17
-- nlohmann/json (fetched automatically via CMake)
+Once configured, cc-context-watch will automatically display your context usage in Claude Code's status line:
+
+```
+Opus | Context: 42.5% (19.8K / 200K)
+```
+
+The percentage is color-coded based on usage:
+- Green: < 50%
+- Yellow: 50-75%
+- Red: > 75%
+
+## License
+
+MIT License
+
