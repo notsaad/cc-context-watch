@@ -36,12 +36,25 @@ int main() {
         auto data = json::parse(input);
 
         auto& ctx = data.at("context_window");
-        int input_tokens = ctx.at("total_input_tokens").get<int>();
-        int output_tokens = ctx.at("total_output_tokens").get<int>();
         int window_size = ctx.at("context_window_size").get<int>();
 
-        int total_tokens = input_tokens + output_tokens;
-        double used_pct = (static_cast<double>(total_tokens) / window_size) * 100.0;
+        // Use current_usage for accurate context state (survives compression/flush).
+        // Cumulative totals (total_input_tokens, total_output_tokens) grow forever
+        // and don't reflect actual context after compression.
+        int used_tokens = 0;
+        double used_pct = 0.0;
+
+        if (ctx.contains("current_usage") && !ctx["current_usage"].is_null()) {
+            auto& usage = ctx["current_usage"];
+            int input = usage.value("input_tokens", 0);
+            int cache_creation = usage.value("cache_creation_input_tokens", 0);
+            int cache_read = usage.value("cache_read_input_tokens", 0);
+            used_tokens = input + cache_creation + cache_read;
+            used_pct = (static_cast<double>(used_tokens) / window_size) * 100.0;
+        } else if (ctx.contains("used_percentage") && !ctx["used_percentage"].is_null()) {
+            used_pct = ctx["used_percentage"].get<double>();
+            used_tokens = static_cast<int>(used_pct / 100.0 * window_size);
+        }
 
         std::string model_name = data.at("model").at("display_name").get<std::string>();
 
@@ -56,7 +69,7 @@ int main() {
 
         const char* reset = "\033[0m";
 
-        std::string used_str = format_tokens(total_tokens);
+        std::string used_str = format_tokens(used_tokens);
         std::string total_str = format_tokens(window_size);
 
         std::ostringstream pct_ss;
